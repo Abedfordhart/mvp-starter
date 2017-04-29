@@ -13,7 +13,9 @@ db.once('open', function() {
 
 var citySchema = mongoose.Schema({
   cityName: String,
-  cityTemp: String
+  cityTemp: String,
+  cityWeather: String,
+  cityFeelsLike: String
 });
 
 var City = mongoose.model('City', citySchema);
@@ -28,4 +30,5 @@ var selectAll = function(callback) {
   });
 };
 
+module.exports = City;
 module.exports.selectAll = selectAll;

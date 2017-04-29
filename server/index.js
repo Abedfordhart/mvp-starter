@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var cities = require('../database-mongo');
+var City = require('../database-mongo/index.js');
 
 var app = express();
 
@@ -17,21 +18,21 @@ app.use(function(req, res, next) {
 app.post('/cities', (req, res) => {
   var newLocation = req.body.location;
   var cityAndState = req.body.location.split(', ');
-  var newCity = cityAndState[0];
-  var newState = cityAndState[1];
+  var myCity = cityAndState[0];
+  var myState = cityAndState[1];
   var accessToken = '7301828142ce2236'
 
-  // const options = {
-  //   url: `http://api.wunderground.com/api/${accessToken}/conditions/q/${newState}/${newCity}.json`,
-  //   method: 'GET',
-  //   headers: {
-  //     'Accept': 'application/json',
-  //     'Accept-Charset': 'utf-8',
-  //     'User-Agent': 'weatherClient'
-  // }
-  request(`http://api.wunderground.com/api/${accessToken}/conditions/q/${newState}/${newCity}.json`, (err, res, body) => {
+  request(`http://api.wunderground.com/api/${accessToken}/conditions/q/${myState}/${myCity}.json`, (err, res, body) => {
     body = JSON.parse(body);
-    console.log(body);
+    console.log(body.current_observation.feelslike_string);
+
+    var newCity = new City({
+      cityName: body.current_observation.display_location.full,
+      cityTemp: body.current_observation.temperature_string,
+      cityWeather: body.current_observation.weather,
+      cityFeelsLike: body.current_observation.feelslike_string
+    })
+
   });
 
   console.log('POST request received from CLIENT!')
